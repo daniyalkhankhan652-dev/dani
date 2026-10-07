@@ -1,0 +1,76 @@
+# 📄 ATS Resume Analyzer
+
+A Streamlit app that reads a resume (PDF, DOCX or TXT) and uses Google's Gemini Flash model to give:
+
+- an estimated **ATS score** (0-100) with a breakdown: Keywords, Content & Impact, Formatting, Structure, Readability
+- **prioritised improvements** with example rewrites
+- **missing keywords**, optionally matched against a pasted job description
+- instant **rule-based checks** (email, phone, standard sections, length)
+- a downloadable `.txt` report
+
+> The score is an AI-generated estimate based on common ATS best practices. Real ATS software differs between employers, so treat it as guidance, not a guarantee.
+
+## Project files
+
+```
+app.py            # the whole app
+requirements.txt  # dependencies
+README.md         # this file
+```
+
+## Run locally
+
+1. Install Python 3.10 or newer.
+2. (Recommended) create a virtual environment:
+   ```bash
+   python -m venv venv
+   venv\Scripts\activate        # Windows
+   source venv/bin/activate     # macOS / Linux
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Get a free API key at https://aistudio.google.com/apikey
+5. Provide the key in one of two ways:
+   - paste it into the sidebar when the app opens, **or**
+   - create `.streamlit/secrets.toml`:
+     ```toml
+     GEMINI_API_KEY = "your-key-here"
+     ```
+6. Start the app:
+   ```bash
+   streamlit run app.py
+   ```
+
+## Configuration
+
+| Setting | Where | Default |
+|---|---|---|
+| `GEMINI_API_KEY` | Streamlit secrets or environment variable (or sidebar box) | none |
+| `GEMINI_MODEL` | Streamlit secrets, environment variable (or sidebar box) | `gemini-3.5-flash` |
+
+If the model name is not found, the app automatically retries with `gemini-2.5-flash`.
+
+## Deploy on Streamlit Community Cloud
+
+1. Push this repo to GitHub (never commit your API key).
+2. Go to https://share.streamlit.io and sign in with GitHub.
+3. Click **Create app**, choose your repo, branch `main` and main file `app.py`.
+4. Open **Advanced settings → Secrets** and add:
+   ```toml
+   GEMINI_API_KEY = "your-key-here"
+   ```
+5. Click **Deploy**.
+
+Note: if a key is set in Secrets, every visitor uses your key and your quota. To make visitors bring their own key, leave the secret out; they can paste theirs in the sidebar.
+
+## Privacy
+
+The resume text is sent to the Gemini API for analysis. The app itself does not save uploaded files.
+
+## Limitations
+
+- Scanned or image-only resumes cannot be read (an ATS can't read them either); use a text-based PDF or DOCX.
+- Files are limited to 5 MB, and very long resumes are truncated before analysis.
+- Scores can vary slightly between runs because the analysis is done by an AI model.read
